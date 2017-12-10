@@ -45,10 +45,8 @@ open class INISerialization {
         public static let lowercaseKeys = ReadingOptions(rawValue: 1 << 5)
         
         /// If set, boolean values are detected. The recognized boolean values
-        /// are "0", "1", "false", "true", "yes", "no", "on", and "off", all
-        /// case-insensitive. If `detectNumericValues` is also set, "0" and "1"
-        /// are **not** detected as boolean. If `detectQuotedValues` is also
-        /// set, quoting a value will disable boolean detection.
+        /// are "false", "true", "yes", "no", "on", and "off", all case-
+        /// insensitive.
         public static let detectBooleanValues = ReadingOptions(rawValue: 1 << 6)
         
         /// If set, a key with no `=` and no trailing non-whitespace text on the

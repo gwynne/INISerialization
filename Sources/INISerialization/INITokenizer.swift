@@ -36,27 +36,27 @@ internal enum Token: Equatable {
     case signedInteger(Substring)
     case unsignedInteger(Substring)
     case decimal(Substring)
-    case bareFalse(Substring) // "0", "false", or "no"
-    case bareTrue(Substring) // "1", "true", or "yes"
+    case bareFalse(Substring) // "off", "false", or "no"
+    case bareTrue(Substring) // "on", "true", or "yes"
     case whitespace(Substring)
     case identifier(Substring) // [a-zA-Z0-9_-]+
     case text(Substring) // non-whitespace
     
     static func ==(lhs: Token, rhs: Token) -> Bool {
         switch (lhs, rhs) {
-            case (.newline, .newline):                                return true
-            case (.sectionOpen, .sectionOpen):                        return true
+            case (.newline, .newline):                              return true
+            case (.sectionOpen, .sectionOpen):                      return true
             case (.sectionClose, .sectionClose):                    return true
-            case (.separator, .separator):                            return true
+            case (.separator, .separator):                          return true
             case (.commentMarker(let l), .commentMarker(let r)):    return l == r
             case (.signedInteger(let l), .signedInteger(let r)):    return l == r
             case (.unsignedInteger(let l), .unsignedInteger(let r)):return l == r
             case (.decimal(let l), .decimal(let r)):                return l == r
             case (.bareFalse(let l), .bareFalse(let r)):            return l == r
-            case (.bareTrue(let l), .bareTrue(let r)):                return l == r
+            case (.bareTrue(let l), .bareTrue(let r)):              return l == r
             case (.whitespace(let l), .whitespace(let r)):          return l == r
             case (.identifier(let l), .identifier(let r)):          return l == r
-            case (.text(let l), .text(let r)):                        return l == r
+            case (.text(let l), .text(let r)):                      return l == r
             case (.quotedString(let l, let ld), .quotedString(let r, let rd)):
                 return l == r && ld == rd
             default:                                                return false
@@ -280,14 +280,6 @@ internal struct INITokenizer {
             // Comment
             case ";", "#":
                 return ParsedToken(position: tokStart, line: line, data: .commentMarker(String(nextChar())))
-//                let eol = nextOf(INITokenizer.newline, skipping: false)
-//
-//                loc = eol.loc
-//                line += 1 // Even if we're at EOF, bump the line number anyway because consistency
-//                if !eof() { // comment could appear at EOF, in which case there's no newline to skip
-//                    _ = nextNewline() // comment implliclty includes newline
-//                }
-//                return ParsedToken(position: tokStart, line: line - 1, data: .comment(eol.skipped))
             // Section name opener
             case "[":
                 _ = nextChar()
