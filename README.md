@@ -20,3 +20,7 @@ The data encoding can be optionally specified; if it is not, a limited attempt i
 - `.detectBooleanValues`: The Boolean names "yes", "no", "true", and "false" will be detected when they appear as the sole content of a value and returned as `Bool` types instead of strings.
 - `.allowMissingValues`: Extends the syntax so a key which appears alone on a line with no `=` separator is treated as having an empty value instead of as a syntax error.
 - `.allowSectionReset`: Extends the section syntax so the section header `[]` resets the current section to the "top" level. Has no effect if `.detectSection` is not also set.
+
+## Decoder
+
+An implementation of `Decoder` as `INIDecoder` is provided. Errors are thrown if an attempt is made to decode an array, or a dictionary nested more than one level deep, as the INI syntax supported by this package does not support these structures.
