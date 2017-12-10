@@ -1,5 +1,5 @@
 //
-//  INICoder.swift
+//  INIDecoder.swift
 //  INISerialization
 //
 //  Created by Gwynne Raskind on 12/10/17.
