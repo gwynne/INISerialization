@@ -73,8 +73,55 @@ class INICoderTests: XCTestCase {
             throw error
         }
     }
+    
+    func testEncoder() throws {
+        let obj = INITest(
+        	FEATURE_TOGGLE: true,
+            AVOID_TOGGLES: false,
+            integers: .init(
+            	tiny_s: Int8.min,
+                tiny_u: UInt8.max,
+                small_s: Int16.min,
+                small_u: UInt16.max,
+                large_s: Int32.min,
+                large_u: UInt32.max,
+                huge_s: Int64.min,
+                huge_u: UInt64.max
+            ),
+            decimals: .init(
+            	small: Float.greatestFiniteMagnitude.significand,
+                large: Double.greatestFiniteMagnitude.significand
+            ),
+            other: .init(
+            	textual: "I am quite a bit of complicated text ❗️"
+            )
+        )
+        
+        let d = try INIEncoder().encode(obj)
+        
+        XCTAssertEqual(d, """
+            FEATURE_TOGGLE = true
+            AVOID_TOGGLES = false
+            [integers]
+            tiny_s = -128
+            tiny_u = 255
+            small_s = -32768
+            small_u = 65535
+            large_s = -2147483648
+            large_u = 4294967295
+            huge_s = -9223372036854775808
+            huge_u = 18446744073709551615
+            [decimals]
+            small = 2.0
+            large = 2.0
+            [other]
+            textual = "I am quite a bit of complicated text ❗️"
+            
+            """.data(using: .utf8)!)
+    }
 
     static var allTests = [
-        ("testDecoder", testDecoder)
+        ("testDecoder", testDecoder),
+        ("testEncoder", testEncoder),
     ]
 }

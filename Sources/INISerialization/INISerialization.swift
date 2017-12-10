@@ -164,6 +164,10 @@ open class INISerialization {
         return (.utf8, 0)
     }
     
+    /// Parse a dictionary from `Data` containing key-value pairs in the INI
+    /// format supported by this module's parser (see `ReadingOptions`). If
+    /// INI sections appear in the data and section parsing is enabled, the
+    /// returned dictionary may be nested up to one level deep.
     open class func iniObject(with data: Data, encoding enc: String.Encoding? = nil, options opt: ReadingOptions = []) throws -> [String: Any] {
         return try data.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> [String: Any] in
             let encoding = enc != nil ? (enc!, skipLength: 0) : _detectUnicodeEncoding(bytes, length: data.count)
@@ -180,16 +184,27 @@ open class INISerialization {
         }
     }
     
-    class func data(withIniObject obj: [String: Any], encoding enc: String.Encoding = .utf8, options opt: WritingOptions = []) throws -> Data {
+    /// Generate serialized `Data` from a dictionary of key-value pairs,
+    /// optionally nested up to one level deep (corresponding to INI sections).
+    open class func data(withIniObject obj: [String: Any], encoding enc: String.Encoding = .utf8, options opt: WritingOptions = []) throws -> Data {
         guard let data = try INIWriter().serialize(obj).data(using: enc) else {
             throw SerializationError.encodingError
         }
         return data
     }
     
+    /// For `INIEncoder`'s use - same as above but encodes ordered pairs. This
+    /// is not exposed publically because the public interface does not
+    /// officially support controlling the order of data in the resulting INI
+    /// output.
+    internal class func data(withIniObject obj: INIOrderedObject, encoding enc: String.Encoding = .utf8, options opt: WritingOptions = []) throws -> Data {
+        guard let data = try INIWriter().serialize(obj).data(using: enc) else {
+            throw SerializationError.encodingError
+        }
+        return data
+    }
 }
 
 internal typealias INIKeyValuePair = (key: String, value: Any)
 internal typealias INIUnorderedObject = [String: Any]
 internal typealias INIOrderedObject = [INIKeyValuePair]
-
