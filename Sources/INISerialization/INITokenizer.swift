@@ -106,16 +106,17 @@ internal struct INITokenizer {
             try work(tokenizer, token)
         }
     }
-    
+
+    // These sets are made available for use by the writer
+    internal static let identifier = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "_-")), notIdentifier = identifier.inverted
+    internal static let whitespace = CharacterSet.whitespaces, notWhitespace = whitespace.inverted
+    internal static let newline = CharacterSet.newlines
+    internal static let doubleQuoteStops = CharacterSet(charactersIn: "\"\\").union(CharacterSet.newlines)
+    internal static let singleQuoteStops = CharacterSet(charactersIn: "'\\").union(CharacterSet.newlines)
+    internal static let significant = CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: "[]="))
+
     // - MARK: Guts
     
-    static private let whitespace = CharacterSet.whitespaces, notWhitespace = whitespace.inverted
-    static private let newline = CharacterSet.newlines
-    static private let identifier = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "_-")), notIdentifier = identifier.inverted
-    static private let doubleQuoteStops = CharacterSet(charactersIn: "\"\\").union(CharacterSet.newlines)
-    static private let singleQuoteStops = CharacterSet(charactersIn: "'\\").union(CharacterSet.newlines)
-    static private let significant = CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: "[]="))
-
     var text: String
     var loc: String.Index
     var line: UInt

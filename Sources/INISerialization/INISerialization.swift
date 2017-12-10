@@ -88,7 +88,7 @@ open class INISerialization {
         /// waiting for end of line, or found ourselves in an impossible state)
         case tokenSequencingError(line: UInt)
         /// A section header was started but not finished when a newline was
-        /// ecnountered.
+        /// encountered.
         case incompleteSectionHeader(line: UInt)
         /// A key was declared but no separator was found before end of line,
         /// and missing values are not enabled.
@@ -106,6 +106,12 @@ open class INISerialization {
         case invalidSectionName(line: UInt)
         /// A key name contained invalid characters
         case invalidKeyName(line: UInt)
+        /// Tried to serialize a dictionary more than one level deep
+        case nestedTooDeep(keyPath: String)
+        /// A key or section name was not a valid identifier while serializing
+        case invalidIdentifier(keyPath: String)
+        /// A dictionary value was of unsupported type
+        case unsupportedType(keyPath: String, type: Any.Type)
     }
     
     // Partially cribbed from JSONSerialization
@@ -174,8 +180,11 @@ open class INISerialization {
         }
     }
     
-    class func data(withIniObject obj: [String: Any?], options opt: WritingOptions = []) throws -> Data {
-        fatalError("Serializing data to INI format is not implemented.")
+    class func data(withIniObject obj: [String: Any], encoding enc: String.Encoding = .utf8, options opt: WritingOptions = []) throws -> Data {
+        guard let data = try INIWriter().serialize(obj).data(using: enc) else {
+            throw SerializationError.encodingError
+        }
+        return data
     }
     
 }
