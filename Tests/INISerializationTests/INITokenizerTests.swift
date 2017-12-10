@@ -1,12 +1,6 @@
 import XCTest
 @testable import INISerialization
 
-extension ParsedToken {
-    init(at offset: Int, line: UInt, _ data: Token) {
-        self.init(position: .init(encodedOffset: offset), line: line, data: data)
-    }
-}
-
 // No, this does not result in enormously readable test cases.
 // But it does result in test samples that don't take up 5 screens for one line
 // of INI file.
@@ -76,17 +70,6 @@ struct INITokenizerTest: CustomStringConvertible {
                 for tok in t.tokens {
                     desc += String(format: "\t@%2u:%3u - \n", tok.line, tok.position.encodedOffset) + tok.data.debugDescription + "\n"
                 }
-        }
-        return desc
-    }
-}
-
-extension Array where Element == ParsedToken {
-    public var tokenListDescription: String {
-        var desc = ""
-
-        for tok in self {
-            desc += String(format: "\t@%2u:%3u - \n", tok.line, tok.position.encodedOffset) + tok.data.debugDescription + "\n"
         }
         return desc
     }

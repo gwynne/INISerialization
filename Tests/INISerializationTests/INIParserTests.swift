@@ -1,46 +1,7 @@
 import XCTest
 @testable import INISerialization
 
-extension BinaryInteger {
-    func hasBit(_ bit: Int) -> Bool {
-        precondition(bit < self.bitWidth, "Requested bit must be within the bit width of this type")
-        
-        return (self & (1 << bit)) != 0
-    }
-    
-    var eachBit: CountableRange<Int> { return (0..<self.bitWidth) }
-    var setBits: [Int] { return self.eachBit.filter { self.hasBit($0) } }
-}
-
-extension OptionSet where RawValue: BinaryInteger {
-    func powerSet() -> [Self] {
-        var result: [Self] = []
-        
-        self.rawValue.setBits.forEach { e in
-            result.append(contentsOf: result.map { $0.union(Self.init(rawValue: RawValue(1 << e))) })
-            result.append(Self.init(rawValue: RawValue(1 << e)))
-        }
-        return result
-    }
-}
-
-extension INISerialization.ReadingOptions: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        return "[" + self.rawValue.setBits.map { [
-            INISerialization.ReadingOptions.detectNumericValues.rawValue.trailingZeroBitCount: "numeric",
-            INISerialization.ReadingOptions.detectSections.rawValue.trailingZeroBitCount: "sections",
-            INISerialization.ReadingOptions.allowHashComments.rawValue.trailingZeroBitCount: "hash",
-            INISerialization.ReadingOptions.allowTrailingComments.rawValue.trailingZeroBitCount: "trailing",
-            INISerialization.ReadingOptions.uppercaseKeys.rawValue.trailingZeroBitCount: "upper",
-            INISerialization.ReadingOptions.lowercaseKeys.rawValue.trailingZeroBitCount: "lower",
-            INISerialization.ReadingOptions.detectBooleanValues.rawValue.trailingZeroBitCount: "boolean",
-            INISerialization.ReadingOptions.allowMissingValues.rawValue.trailingZeroBitCount: "missing",
-            INISerialization.ReadingOptions.allowSectionReset.rawValue.trailingZeroBitCount: "reset",
-        ][$0]! }.joined(separator: ",") + "]"
-    }
-}
-
-class INISerializationTests: XCTestCase {
+class INIParserTests: XCTestCase {
     
     func testIdentifierTokens() throws {
         let raw1 = """
