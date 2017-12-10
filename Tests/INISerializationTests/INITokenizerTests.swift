@@ -74,7 +74,7 @@ struct INITokenizerTest: CustomStringConvertible {
             case .Tokens(let t):
                 desc += "\n"
                 for tok in t.tokens {
-                    desc += String(format: "\t@%2u:%3u - %@\n", tok.line, tok.position.encodedOffset, tok.data.debugDescription)
+                    desc += String(format: "\t@%2u:%3u - \n", tok.line, tok.position.encodedOffset) + tok.data.debugDescription + "\n"
                 }
         }
         return desc
@@ -86,7 +86,7 @@ extension Array where Element == ParsedToken {
         var desc = ""
 
         for tok in self {
-            desc += String(format: "\t@%2u:%3u - %@\n", tok.line, tok.position.encodedOffset, tok.data.debugDescription)
+            desc += String(format: "\t@%2u:%3u - \n", tok.line, tok.position.encodedOffset) + tok.data.debugDescription + "\n"
         }
         return desc
     }
