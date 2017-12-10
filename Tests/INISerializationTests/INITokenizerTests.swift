@@ -199,19 +199,21 @@ class INITokenizerTests: XCTestCase {
                 .t(suquo,   QT().squo(ucfirst))
             ]
         }
-        try runTokenizerTestSet([
-            .t("0",     QT().intr(0)),
+        var tests: [INITokenizerTest] = [
+            .t("0",     QT().uint(0)),
             .t("\"0\"", QT().dquo("0")),
             .t("'0'",   QT().squo("0")),
-            .t("1",     QT().intr(1)),
+            .t("1",     QT().uint(1)),
             .t("\"1\"", QT().dquo("1")),
             .t("'1'",   QT().squo("1")),
         ]
-            + boolTests("false") { QT().bfls($0) }
-            + boolTests("true")  { QT().btru($0) }
-            + boolTests("no")    { QT().bfls($0) }
-            + boolTests("yes")   { QT().btru($0) }
-        )
+        tests += boolTests("false") { QT().bfls($0) }
+        tests += boolTests("true")  { QT().btru($0) }
+        tests += boolTests("no")    { QT().bfls($0) }
+        tests += boolTests("yes")   { QT().btru($0) }
+        tests += boolTests("off")   { QT().bfls($0) }
+        tests += boolTests("on")    { QT().btru($0) }
+        try runTokenizerTestSet(tests)
     }
     
     func testTokenizerNumerics() throws {

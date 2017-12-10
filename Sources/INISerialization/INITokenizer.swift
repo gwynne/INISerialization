@@ -241,12 +241,14 @@ internal struct INITokenizer {
         
         // Treat boolean names specially
         if nextStop.skipped.compare("true", options: .caseInsensitive, range: nil, locale: nil) == .orderedSame ||
-           nextStop.skipped.compare("yes", options: .caseInsensitive, range: nil, locale: nil) == .orderedSame
+           nextStop.skipped.compare("yes", options: .caseInsensitive, range: nil, locale: nil) == .orderedSame ||
+           nextStop.skipped.compare("on", options: .caseInsensitive, range: nil, locale: nil) == .orderedSame
         {
             return .bareTrue(nextStop.skipped)
         }
         if nextStop.skipped.compare("false", options: .caseInsensitive, range: nil, locale: nil) == .orderedSame ||
-           nextStop.skipped.compare("no", options: .caseInsensitive, range: nil, locale: nil) == .orderedSame
+           nextStop.skipped.compare("no", options: .caseInsensitive, range: nil, locale: nil) == .orderedSame ||
+           nextStop.skipped.compare("off", options: .caseInsensitive, range: nil, locale: nil) == .orderedSame
         {
             return .bareFalse(nextStop.skipped)
         }
