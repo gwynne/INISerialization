@@ -40,7 +40,7 @@ extension INISerialization.ReadingOptions: CustomDebugStringConvertible {
     }
 }
 
-class INISerializationTest: XCTestCase {
+class INISerializationTests: XCTestCase {
     
     func testIdentifierTokens() throws {
         let raw1 = """

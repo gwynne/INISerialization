@@ -3,4 +3,6 @@ import XCTest
 
 XCTMain([
     testCase(INISerializationTests.allTests),
+    testCase(INITokenizerTests.allTests),
+    testCase(INICoderTests.allTests),
 ])

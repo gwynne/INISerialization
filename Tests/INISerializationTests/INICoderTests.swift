@@ -27,7 +27,7 @@ struct INITest: Codable {
     let other: otherTest
 }
 
-class INICoderTest: XCTestCase {
+class INICoderTests: XCTestCase {
     func testDecoder() throws {
         let raw = """
             FEATURE_TOGGLE = true
