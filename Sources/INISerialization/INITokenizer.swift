@@ -79,9 +79,9 @@ internal struct ParsedToken: Equatable {
 internal struct INITokenizer {
     // - MARK: "External" interface
     
-    init(_ text: NSString) {
+    init(_ text: String) {
         self.text = text
-        self.loc = (text as String).startIndex
+        self.loc = text.startIndex
         self.line = 1
     }
     
@@ -91,7 +91,7 @@ internal struct INITokenizer {
     
     static func tokenize(_ text: String) throws -> [ParsedToken] {
         var tokens: [ParsedToken] = []
-        var tokenizer = INITokenizer(text as NSString)
+        var tokenizer = INITokenizer(text)
         
         while let token = try tokenizer.nextToken() {
             tokens.append(token)
@@ -100,7 +100,7 @@ internal struct INITokenizer {
     }
     
     static func tokenize(_ text: String, work: (INITokenizer, ParsedToken) throws -> Void) throws {
-        var tokenizer = INITokenizer(text as NSString)
+        var tokenizer = INITokenizer(text)
 
         while let token = try tokenizer.nextToken() {
             try work(tokenizer, token)
@@ -116,8 +116,7 @@ internal struct INITokenizer {
     static private let singleQuoteStops = CharacterSet(charactersIn: "'\\").union(CharacterSet.newlines)
     static private let significant = CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: "[]="))
 
-    /// TODO: Is the NSString shenanigan to avoid copying really needed?
-    var text: NSString
+    var text: String
     var loc: String.Index
     var line: UInt
     
@@ -125,45 +124,45 @@ internal struct INITokenizer {
     func eof() -> Bool { return loc >= end() }
     
     /// Convenience to get String.endIndex on NSString
-    func end() -> String.Index { return (text as String).endIndex }
+    func end() -> String.Index { return text.endIndex }
     
     /// String.index(_, offsetBy:, limitedBy:) that returns the limit instead of
     /// nil if it's reached.
     func minIdx(for adv: String.IndexDistance) -> String.Index {
-        return (text as String).index(loc, offsetBy: adv, limitedBy: end()) ?? end()
+        return text.index(loc, offsetBy: adv, limitedBy: end()) ?? end()
     }
     
     /// Find the next character in string which is in the given `CharacterSet`,
     /// optionally skipping past that character while returning it and always
     /// returning the text which was skipped over.
     func nextOf(_ set: CharacterSet, skipping: Bool) -> (loc: String.Index, char: Character?, skipped: Substring) {
-        let place = (text as String).rangeOfCharacter(from: set, options: [], range: loc..<end())
+        let place = text.rangeOfCharacter(from: set, options: [], range: loc..<end())
         
         if let p = place {
             return (
-                loc: skipping ? (text as String).index(after: p.lowerBound) : p.lowerBound,
-                char: (text as String)[p.lowerBound],
-                skipped: (text as String)[loc..<p.lowerBound]
+                loc: skipping ? text.index(after: p.lowerBound) : p.lowerBound,
+                char: text[p.lowerBound],
+                skipped: text[loc..<p.lowerBound]
             )
         } else {
-            return (loc: end(), char: nil, skipped: (text as String)[loc..<end()])
+            return (loc: end(), char: nil, skipped: text[loc..<end()])
         }
     }
     
     /// Just an equality comparison which takes a range to search
     func matchAgainst(_ str: String, options cmpOpts: String.CompareOptions = []) -> Bool {
-        return (text as String).compare(str, options: cmpOpts, range: loc..<minIdx(for: str.count), locale: nil) == .orderedSame
+        return text.compare(str, options: cmpOpts, range: loc..<minIdx(for: str.count), locale: nil) == .orderedSame
     }
     
     /// Sneak peek at what the next character is
     func peekChar() -> Character {
-        return (text as String)[loc]
+        return text[loc]
     }
     
     /// Get the next character and advance past it
     mutating func nextChar() -> Character {
-        let c = (text as String)[loc]
-        loc = (text as String).index(after: loc)
+        let c = text[loc]
+        loc = text.index(after: loc)
         return c
     }
     

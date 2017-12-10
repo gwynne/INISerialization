@@ -16,7 +16,7 @@ internal class INIParser {
     // - MARK: "External" interface
     
     class func parse(_ text: String, options: INISerialization.ReadingOptions = []) throws -> [String: Any] {
-        var tokenizer = INITokenizer(text as NSString)
+        var tokenizer = INITokenizer(text)
         
         return try INIParser(options: options) { try tokenizer.nextToken() }.parse()
     }
