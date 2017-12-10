@@ -17,7 +17,7 @@ The data encoding can be optionally specified; if it is not, a limited attempt i
 - `.allowHashComments`: By default the parser accepts only comments beginning with `;`. This option makes `#` a valid comment character as well.
 - `.allowTrailingComments`: By default the parser accepts comments only when they appear on their own lines. This option allows comments to appear after any other valid syntactic construct on a line. However, beware using comments after values, as the results may be ambiguous.
 - `.uppercaseKeys` and `.lowercaseKeys`: If set, these options cause all keys, including section names, to be normalized to uppercase or lowercase, respectively. If both are set, lowercase always wins.
-- `.detectBooleanValues`: The Boolean names "yes", "no", "true", and "false" will be detected when they appear as the sole content of a value and returned as `Bool` types instead of strings.
+- `.detectBooleanValues`: The Boolean names "on", "off", "yes", "no", "true", and "false" will be detected when they appear as the sole content of a value and returned as `Bool` types instead of strings.
 - `.allowMissingValues`: Extends the syntax so a key which appears alone on a line with no `=` separator is treated as having an empty value instead of as a syntax error.
 - `.allowSectionReset`: Extends the section syntax so the section header `[]` resets the current section to the "top" level. Has no effect if `.detectSection` is not also set.
 
