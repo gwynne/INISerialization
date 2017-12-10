@@ -21,7 +21,8 @@ class QuickTokens {
     func spac(_ s: String) -> QuickTokens   { add(.whitespace(subs(s))); pos += s.count; return self }
     func seco() -> QuickTokens              { add(.sectionOpen); pos += 1; return self }
     func secc() -> QuickTokens              { add(.sectionClose); pos += 1; return self }
-    func intr(_ i: Int) -> QuickTokens      { let s = String(i); add(.integer(subs(s))); pos += s.count; return self }
+    func sint(_ i: Int) -> QuickTokens      { let s = String(i); add(.signedInteger(subs(s))); pos += s.count; return self }
+    func uint(_ i: UInt) -> QuickTokens     { let s = String(i); add(.unsignedInteger(subs(s))); pos += s.count; return self }
     func decl(_ d: Double) -> QuickTokens   { let s = String(d); add(.decimal(subs(s))); pos += s.count; return self }
     func dquo(_ s: String) -> QuickTokens   { add(.quotedString(s, doubleQuoted: true)); pos += esclen(s, "\"") + 2; return self }
     func squo(_ s: String) -> QuickTokens   { add(.quotedString(s, doubleQuoted: false)); pos += esclen(s, "'") + 2; return self }
@@ -214,9 +215,14 @@ class INITokenizerTests: XCTestCase {
     }
     
     func testTokenizerNumerics() throws {
+        for n in [0, 1, UInt(UInt32.max), UInt.max, UInt(UInt32.min), UInt(UInt64.min), UInt.min] {
+            let s = "\(n)", q = "'\(n)'"
+            try runTokenizerTestSet([.t(s, QT().uint(UInt(s)!)), .t(q, QT().squo(s))])
+        }
+
         for n in [0, 1, Int(UInt32.max), Int.max, Int(Int32.min), Int(Int64.min), Int.min] {
             let s = "\(n)", q = "'\(n)'"
-            try runTokenizerTestSet([.t(s, QT().intr(Int(s)!)), .t(q, QT().squo(s))])
+            try runTokenizerTestSet([.t(s, n < 0 ? QT().sint(Int(s)!) : QT().uint(UInt(s)!)), .t(q, QT().squo(s))])
         }
 
         for n in [0.0, 1.0, 2.5, Double.leastNormalMagnitude] {

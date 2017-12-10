@@ -33,7 +33,8 @@ internal enum Token: Equatable {
     case sectionClose // ]
     case separator // =
     case quotedString(String, doubleQuoted: Bool) // ' and "
-    case integer(Substring)
+    case signedInteger(Substring)
+    case unsignedInteger(Substring)
     case decimal(Substring)
     case bareFalse(Substring) // "0", "false", or "no"
     case bareTrue(Substring) // "1", "true", or "yes"
@@ -48,7 +49,8 @@ internal enum Token: Equatable {
             case (.sectionClose, .sectionClose):                    return true
             case (.separator, .separator):                            return true
             case (.commentMarker(let l), .commentMarker(let r)):    return l == r
-            case (.integer(let l), .integer(let r)):                return l == r
+            case (.signedInteger(let l), .signedInteger(let r)):    return l == r
+            case (.unsignedInteger(let l), .unsignedInteger(let r)):return l == r
             case (.decimal(let l), .decimal(let r)):                return l == r
             case (.bareFalse(let l), .bareFalse(let r)):            return l == r
             case (.bareTrue(let l), .bareTrue(let r)):                return l == r
@@ -109,7 +111,6 @@ internal struct INITokenizer {
     
     static private let whitespace = CharacterSet.whitespaces, notWhitespace = whitespace.inverted
     static private let newline = CharacterSet.newlines
-    static private let decimal = CharacterSet.decimalDigits.union(CharacterSet(charactersIn: ".")), notDecimal = decimal.inverted
     static private let identifier = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "_-")), notIdentifier = identifier.inverted
     static private let doubleQuoteStops = CharacterSet(charactersIn: "\"\\").union(CharacterSet.newlines)
     static private let singleQuoteStops = CharacterSet(charactersIn: "'\\").union(CharacterSet.newlines)
@@ -250,8 +251,11 @@ internal struct INITokenizer {
             return .bareFalse(nextStop.skipped)
         }
         // Interpret integer and floating-point values
+        if let _ = UInt(nextStop.skipped) {
+            return .unsignedInteger(nextStop.skipped)
+        }
         if let _ = Int(nextStop.skipped) {
-            return .integer(nextStop.skipped)
+            return .signedInteger(nextStop.skipped)
         }
         if let _ = Double(nextStop.skipped) {
             return .decimal(nextStop.skipped)
@@ -333,7 +337,8 @@ extension Token: CustomStringConvertible, CustomDebugStringConvertible {
             case .sectionClose: return "sectionClose(])"
             case .separator: return "separator(=)"
             case .quotedString(let str, let wasDouble): return "quotedString(\"\(str)\", " + (wasDouble ? "double" : "single") + ")"
-            case .integer(let str): return "integer(\(str))"
+            case .signedInteger(let str): return "signedInteger(\(str))"
+            case .unsignedInteger(let str): return "unsignedInteger(\(str))"
             case .decimal(let str): return "decimal(\(str))"
             case .bareFalse(let str): return "bareFalse(\(str))"
             case .bareTrue(let str): return "bareTrue(\(str))"
@@ -354,7 +359,8 @@ extension Token: CustomStringConvertible, CustomDebugStringConvertible {
                 return ".quotedString(\"" +
                      str.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"") +
                 "\", doubleQuoted: " + (wasDouble ? "true" : "false") + ")"
-            case .integer(let str): return ".integer(\"\(str)\")"
+            case .signedInteger(let str): return ".signedInteger(\"\(str)\")"
+            case .unsignedInteger(let str): return ".unsignedInteger(\"\(str)\")"
             case .decimal(let str): return ".decimal(\"\(str)\")"
             case .bareFalse(let str): return ".bareFalse(\"\(str)\")"
             case .bareTrue(let str): return ".bareTrue(\"\(str)\")"

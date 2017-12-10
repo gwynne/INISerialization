@@ -81,7 +81,7 @@ internal class INIParser {
                 case .sectionClose: try handleSectionClose(tok)
                 case .separator: try handleSeparator(tok)
                 case .quotedString: try handleQuotedString(tok)
-                case .integer: try handleInteger(tok)
+                case .signedInteger, .unsignedInteger: try handleInteger(tok)
                 case .decimal: try handleDecimal(tok)
                 case .bareTrue, .bareFalse: try handleBoolean(tok)
                 case .whitespace: try handleWhitespace(tok)
@@ -150,7 +150,8 @@ internal class INIParser {
                     case .sectionClose: setTrueValue("]", forKey: key)
                     case .separator: setTrueValue("=", forKey: key)
                     case .quotedString(let str, _): setTrueValue(String(str), forKey: key)
-                    case .integer(let str): setTrueValue(options.contains(.detectNumericValues) ? Int(str)! : String(str), forKey: key)
+                    case .signedInteger(let str): setTrueValue(options.contains(.detectNumericValues) ? Int(str)! : String(str), forKey: key)
+                    case .unsignedInteger(let str): setTrueValue(options.contains(.detectNumericValues) ? UInt(str)! : String(str), forKey: key)
                     case .decimal(let str): setTrueValue(options.contains(.detectNumericValues) ? Double(str)! : String(str), forKey: key)
                     case .bareFalse(let str): setTrueValue(options.contains(.detectBooleanValues) ? false : String(str), forKey: key)
                     case .bareTrue(let str): setTrueValue(options.contains(.detectBooleanValues) ? true : String(str), forKey: key)
@@ -170,7 +171,8 @@ internal class INIParser {
                         case .separator: intermediate += "="
                         case .quotedString(let str, let isDouble): // When a quoted string appears in a set of value tokens, the quotes lose their magic
                             intermediate += (isDouble ? "\"" : "'") + str + (isDouble ? "\"" : "'")
-                        case .integer(let str): intermediate += str
+                        case .signedInteger(let str): intermediate += str
+                        case .unsignedInteger(let str): intermediate += str
                         case .decimal(let str): intermediate += str
                         case .bareFalse(let str): intermediate += str
                         case .bareTrue(let str): intermediate += str

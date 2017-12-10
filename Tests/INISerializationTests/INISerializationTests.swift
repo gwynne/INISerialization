@@ -84,26 +84,29 @@ class INISerializationTest: XCTestCase {
             ; Numeric token
             num1 = 1
             num2 = 58209
-            num3 = 0.6182
-            num4 = .112
-            num5 = 5.
+            num3 = -79238
+            num4 = 0.6182
+            num5 = .112
+            num6 = 5.
             """
         
         let results1 = try INIParser.parse(raw1, options: [])
         
         XCTAssertEqual(results1["num1"] as? String, "1")
         XCTAssertEqual(results1["num2"] as? String, "58209")
-        XCTAssertEqual(results1["num3"] as? String, "0.6182")
-        XCTAssertEqual(results1["num4"] as? String, ".112")
-        XCTAssertEqual(results1["num5"] as? String, "5.")
+        XCTAssertEqual(results1["num3"] as? String, "-79238")
+        XCTAssertEqual(results1["num4"] as? String, "0.6182")
+        XCTAssertEqual(results1["num5"] as? String, ".112")
+        XCTAssertEqual(results1["num6"] as? String, "5.")
 
         let results2 = try INIParser.parse(raw1, options: [.detectNumericValues])
 
-        XCTAssertEqual(results2["num1"] as? Int, 1)
-        XCTAssertEqual(results2["num2"] as? Int, 58209)
-        XCTAssertEqual(results2["num3"] as? Double, 0.6182)
-        XCTAssertEqual(results2["num4"] as? Double, 0.112)
-        XCTAssertEqual(results2["num5"] as? Double, 5.0)
+        XCTAssertEqual(results2["num1"] as? UInt, 1)
+        XCTAssertEqual(results2["num2"] as? UInt, 58209)
+        XCTAssertEqual(results2["num3"] as? Int, -79238)
+        XCTAssertEqual(results2["num4"] as? Double, 0.6182)
+        XCTAssertEqual(results2["num5"] as? Double, 0.112)
+        XCTAssertEqual(results2["num6"] as? Double, 5.0)
     }
     
     func testBooleanTokens() throws {
