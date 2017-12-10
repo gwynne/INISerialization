@@ -15,7 +15,7 @@ internal class INIParser {
     
     // - MARK: "External" interface
     
-    class func parse(_ text: String, options: INISerialization.ReadingOptions = []) throws -> [String: Any] {
+    static func parse(_ text: String, options: INISerialization.ReadingOptions = []) throws -> INIUnorderedObject {
         var tokenizer = INITokenizer(text)
         
         return try INIParser(options: options) { try tokenizer.nextToken() }.parse()
@@ -66,7 +66,7 @@ internal class INIParser {
         }
     }
     
-    func parse() throws -> [String: Any] {
+    func parse() throws -> INIUnorderedObject {
         var lastLoc: String.Index = String.Index(encodedOffset: 0)
         var lastLine: UInt = 0
         
@@ -98,7 +98,7 @@ internal class INIParser {
     
     var stack: [State] = [.inSection(name: nil)]
     var line: UInt = 1
-    var result: [String: Any] = [:]
+    var result: INIUnorderedObject = [:]
     
     var topState: State { return stack.last! }
     func popState() { _ = stack.popLast() }
@@ -123,7 +123,7 @@ internal class INIParser {
         if let sect = maybeSect {
             let finalSect = options.contains(.lowercaseKeys) ? sect.lowercased() : (options.contains(.uppercaseKeys) ? sect.uppercased() : sect)
             
-            if var existing = result[finalSect] as? [String: Any] {
+            if var existing = result[finalSect] as? INIUnorderedObject {
                 existing[finalKey] = value
                 result[finalSect] = existing
             } else {

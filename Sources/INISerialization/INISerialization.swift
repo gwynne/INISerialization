@@ -180,3 +180,7 @@ open class INISerialization {
     
 }
 
+internal typealias INIKeyValuePair = (key: String, value: Any)
+internal typealias INIUnorderedObject = [String: Any]
+internal typealias INIOrderedObject = [INIKeyValuePair]
+

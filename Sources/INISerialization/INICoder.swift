@@ -104,8 +104,8 @@ fileprivate class _INIDecoder : Decoder {
     public var userInfo: [CodingUserInfoKey: Any]
     
     public func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key: CodingKey {
-        guard let data = container as? [String: Any] else {
-            throw DecodingError.typeMismatch([String: Any].self, atPath: self.codingPath)
+        guard let data = container as? INIUnorderedObject else {
+            throw DecodingError.typeMismatch(INIUnorderedObject.self, atPath: self.codingPath)
         }
         return KeyedDecodingContainer(_INIKeyedDecodingContainer<Key>(referencing: self, wrapping: data))
     }
@@ -126,9 +126,9 @@ fileprivate struct _INIKeyedDecodingContainer<K: CodingKey> : KeyedDecodingConta
     // - MARK: Guts
     
     private let decoder: _INIDecoder
-    private let container: [String: Any]
+    private let container: INIUnorderedObject
     
-    fileprivate init(referencing: _INIDecoder, wrapping: [String: Any]) {
+    fileprivate init(referencing: _INIDecoder, wrapping: INIUnorderedObject) {
         self.decoder = referencing
         self.container = wrapping
         self.codingPath = decoder.codingPath
@@ -208,7 +208,7 @@ fileprivate struct _INIKeyedDecodingContainer<K: CodingKey> : KeyedDecodingConta
     }
     
     public func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
-    	let value = try requireType([String: Any].self, forKey: key)
+    	let value = try requireType(INIUnorderedObject.self, forKey: key)
         
         return KeyedDecodingContainer(_INIKeyedDecodingContainer<NestedKey>(referencing: self.decoder, wrapping: value))
     }
